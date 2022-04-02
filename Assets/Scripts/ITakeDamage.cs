@@ -15,7 +15,12 @@ namespace HomeWork2
     public interface IInterractWithButton
     {
         public void DoOnButtonPressedActions();
-    } 
+    }
+
+    public interface IOpenDoors
+    {        
+    }
+
 }
 
 

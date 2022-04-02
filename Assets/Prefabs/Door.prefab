@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 1551356849566532283}
   - component: {fileID: 1551356849566532280}
   - component: {fileID: 1551356849566532281}
-  - component: {fileID: 1551356849566532282}
+  - component: {fileID: 1957662565268843488}
+  - component: {fileID: 7946320881649669131}
+  - component: {fileID: 5332643386282787518}
   - component: {fileID: 7791450057442122414}
   m_Layer: 0
   m_Name: Door
@@ -83,7 +85,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1551356849566532282
+--- !u!65 &1957662565268843488
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551356849566532276}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 5.39}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &7946320881649669131
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,6 +111,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &5332643386282787518
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551356849566532276}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!114 &7791450057442122414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,3 +139,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d0873e1eadb4f4582e0b3ac04e12df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _autoOpen: 0

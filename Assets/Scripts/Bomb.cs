@@ -8,13 +8,12 @@ namespace HomeWork2
 {
     public class Bomb : MonoBehaviour
     {
-        [SerializeField] private float _bombDamage = 10;
+        //[SerializeField] private float _bombDamage = 10;
         private Collider _bombCollider;
         private Rigidbody _bombRigidbody;
         private float _bombDetonationTimer = 3f;
         private float _explosionRadius = 5;
-        private float _explosionForce = 100000;
-        private bool _bombDetonationArmed = false;
+        private float _explosionForce = 100000;        
 
         private void Awake()
         {
@@ -24,8 +23,7 @@ namespace HomeWork2
 
         public void Init(float bombPushforce, float bombLifeTime)
         {
-            _bombRigidbody.AddForce(transform.forward * bombPushforce);
-            _bombDetonationArmed = true;            
+            _bombRigidbody.AddForce(transform.forward * bombPushforce);                  
             Invoke(nameof(Detonate), _bombDetonationTimer);
         }
 

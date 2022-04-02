@@ -4,7 +4,7 @@ using HomeWork2;
 
 namespace HomeWork2
 {
-    public class Player : MonoBehaviour, ITakeDamage, IHealable
+    public class Player : MonoBehaviour, ITakeDamage, IHealable, IOpenDoors
     {
         [SerializeField] private GameObject _weaponArrowPrefab;
         [SerializeField] private GameObject _bombPrefab;
@@ -29,16 +29,21 @@ namespace HomeWork2
         private bool _bombOn = false;
         private Rigidbody _playerRigidBody;
         private Collider _playerCollider;
+        private Camera _mainCamera;
+        private float _rotationSpeed = 120;
 
 
         void Start()
         {
             _playerCollider = GetComponent<Collider>();
             _playerRigidBody = GetComponent<Rigidbody>();
+            _mainCamera = Camera.main;
         }
 
         void Update()
         {
+            Debug.DrawRay(_mainCamera.transform.position, _mainCamera.ScreenPointToRay(Input.mousePosition).direction);
+
             if (Input.GetKey(KeyCode.Mouse0))
                 _fireOn = true;
 
@@ -55,7 +60,7 @@ namespace HomeWork2
         private void FixedUpdate()
         {
             _playerRotationY = Input.GetAxis("Mouse X");            
-            transform.Rotate(0f, _playerRotationY, 0f, Space.World);                        
+            transform.Rotate(0f, _playerRotationY * _rotationSpeed * Time.deltaTime, 0f, Space.World);                        
             MovePlayer();
             ProcessHotKeys();
             _GUITextPresenter.text = $"HP {_playerHealth}";            
