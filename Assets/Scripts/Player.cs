@@ -11,9 +11,13 @@ namespace HomeWork2
         public Transform _enemiesTargetPoint;
         [SerializeField] private Transform _weaponArrowSpawnPoint;
         [SerializeField] private Transform _bombSpawnPoint;
+        [SerializeField] private Transform _cameraPoint;
         [SerializeField] private Text _GUITextPresenter;
+        [SerializeField] private Animator _animator;
+        [SerializeField] private Camera _camera;
+        private readonly int _isWalking = Animator.StringToHash("isWalking");
         private float _playerRotationY;
-        private float _playerForwardSpeed = 4;        
+        private float _playerForwardSpeed = 4;
         private float _playerStrafeSpeed = 4;
         private float _jumpForce = 400;
         private float _playerHealth = 100;
@@ -21,9 +25,11 @@ namespace HomeWork2
         private float _bowFireDelay = 1.5f;
         private float _bowFireTime = -100f;
         private float _bombPushForce = 10000f;
-        private float _bombLifeTime = 10f;        
+        private float _bombLifeTime = 10f;
         private float _bombFireDelay = 10f;
-        private float _bombFireTime = -100f;        
+        private float _bombFireTime = -100f;
+        private float _jumpPresstimer = 0f;
+        private bool _jumpButtonAlreadyPressed = false;
         private bool _fireOn = false;
         private bool _jumpOn = false;
         private bool _bombOn = false;
@@ -48,10 +54,23 @@ namespace HomeWork2
                 _fireOn = true;
 
             if (Input.GetKeyDown(KeyCode.Space))
-                _jumpOn = true;
+            {
+                _jumpButtonAlreadyPressed = true;
+                _jumpPresstimer = 0;
+            }
 
-            if (Input.GetKeyDown(KeyCode.Space))
-                _jumpOn = true;
+            if (_jumpButtonAlreadyPressed)
+            {
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    _jumpPresstimer += Time.deltaTime;
+                }
+                else
+                {                    
+                    _jumpButtonAlreadyPressed = false;
+                    _jumpOn = true;
+                }
+            }
 
             if (Input.GetKeyDown(KeyCode.Alpha1))
                 _bombOn = true;
@@ -59,11 +78,12 @@ namespace HomeWork2
 
         private void FixedUpdate()
         {
-            _playerRotationY = Input.GetAxis("Mouse X");            
-            transform.Rotate(0f, _playerRotationY * _rotationSpeed * Time.deltaTime, 0f, Space.World);                        
+            _playerRotationY = Input.GetAxis("Mouse X");
+            transform.Rotate(0f, _playerRotationY * _rotationSpeed * Time.deltaTime, 0f, Space.World);
             MovePlayer();
+            MoveCamera();
             ProcessHotKeys();
-            _GUITextPresenter.text = $"HP {_playerHealth}";            
+            _GUITextPresenter.text = $"HP {_playerHealth}";
         }
 
         #region ProcessHotKeys
@@ -76,7 +96,7 @@ namespace HomeWork2
             }
 
             if (_jumpOn)
-            {                
+            {
                 _jumpOn = false;
                 Jump();
             }
@@ -95,7 +115,25 @@ namespace HomeWork2
         {
             Vector3 _playerMoveDirection = new Vector3(Input.GetAxis("Horizontal") * _playerStrafeSpeed * Time.deltaTime, 0, Input.GetAxis("Vertical") * _playerForwardSpeed * Time.deltaTime);
             _playerMoveDirection = transform.TransformDirection(_playerMoveDirection);
-            _playerRigidBody.MovePosition(transform.position + _playerMoveDirection);            
+            _playerRigidBody.MovePosition(transform.position + _playerMoveDirection);
+
+
+            if (Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+                _animator.SetBool(_isWalking, true);
+            else
+                _animator.SetBool(_isWalking, false);
+        }
+
+        private void MoveCamera()
+        {
+            float cameraSpeed = 3;
+            float x = Mathf.Lerp(_camera.transform.position.x, _cameraPoint.transform.position.x, cameraSpeed * Time.deltaTime);
+            float y = Mathf.Lerp(_camera.transform.position.y, _cameraPoint.transform.position.y, cameraSpeed * Time.deltaTime);
+            float z = Mathf.Lerp(_camera.transform.position.z, _cameraPoint.transform.position.z, cameraSpeed * Time.deltaTime);
+            Quaternion rotation = Quaternion.Slerp(_camera.transform.rotation, _cameraPoint.transform.rotation, cameraSpeed * Time.deltaTime);
+            _camera.transform.position = new Vector3(x, y, z);
+            _camera.transform.rotation = rotation;
+
         }
 
         private void Fire()
@@ -112,25 +150,33 @@ namespace HomeWork2
             if (Time.time - _bombFireTime > _bombFireDelay)
             {
                 _bombFireTime = Time.time;
-                GameObject bombObject = Instantiate(_bombPrefab, _bombSpawnPoint.position, _bombSpawnPoint.rotation);                                
+                GameObject bombObject = Instantiate(_bombPrefab, _bombSpawnPoint.position, _bombSpawnPoint.rotation);
                 Bomb bomb = bombObject.GetComponent<Bomb>();
-                bomb.Init(_bombPushForce, _bombLifeTime);                
+                bomb.Init(_bombPushForce, _bombLifeTime);
             }
         }
 
         private void Jump()
         {
             if (IsGrounded())
-            _playerRigidBody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+                if (_jumpPresstimer > 1)
+                {
+                    _playerRigidBody.AddForce(Vector3.up * _jumpForce * 1.5f, ForceMode.Impulse);
+                    _jumpPresstimer = 0;
+                }
+                else
+                {
+                    _playerRigidBody.AddForce(Vector3.up * _jumpForce, ForceMode.Impulse);
+                }
         }
         #endregion
 
         private bool IsGrounded()
-        {            
-            return Physics.Raycast(transform.position, -Vector3.up, _playerCollider.bounds.extents.y + 0.05f);            
-        }  
+        {
+            return Physics.Raycast(transform.position, -Vector3.up, _playerCollider.bounds.extents.y + 0.05f);
+        }
 
-    public void Hit(float damage)
+        public void Hit(float damage)
         {
             if (_playerHealth > 0)
             {

@@ -7,7 +7,8 @@ namespace HomeWork2
 {    public class Door : MonoBehaviour, IInterractWithButton
     {
         [SerializeField] private bool _autoOpen = false;
-        private bool _isOpen = false;
+        [SerializeField] private Animator _animator;
+        private readonly int isOpen = Animator.StringToHash("isOpen");        
         private Vector3 _startingTransform;
         private Vector3 _moveRange = new Vector3 (0, 3, 0);
         void Awake()
@@ -29,9 +30,8 @@ namespace HomeWork2
 
 
         private void OpenDoor()
-        {
-            _isOpen = !_isOpen;
-            transform.position = _startingTransform + (_isOpen ? _moveRange : Vector3.zero);
+        {            
+            _animator.SetBool(isOpen, !_animator.GetBool(isOpen));
         }
     }
 }
