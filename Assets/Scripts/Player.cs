@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using HomeWork2;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 namespace HomeWork2
 {
@@ -12,9 +14,10 @@ namespace HomeWork2
         [SerializeField] private Transform _weaponArrowSpawnPoint;
         [SerializeField] private Transform _bombSpawnPoint;
         [SerializeField] private Transform _cameraPoint;
-        [SerializeField] private Text _GUITextPresenter;
+        [SerializeField] private TextMeshProUGUI _GUITextPresenter;
         [SerializeField] private Animator _animator;
         [SerializeField] private Camera _camera;
+
         private readonly int _isWalking = Animator.StringToHash("isWalking");
         private float _playerRotationY;
         private float _playerForwardSpeed = 4;
@@ -36,7 +39,7 @@ namespace HomeWork2
         private Rigidbody _playerRigidBody;
         private Collider _playerCollider;
         private Camera _mainCamera;
-        private float _rotationSpeed = 120;
+        private float _rotationSpeed = 250;
 
 
         void Start()
@@ -53,6 +56,7 @@ namespace HomeWork2
             if (Input.GetKey(KeyCode.Mouse0))
                 _fireOn = true;
 
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 _jumpButtonAlreadyPressed = true;
@@ -66,7 +70,7 @@ namespace HomeWork2
                     _jumpPresstimer += Time.deltaTime;
                 }
                 else
-                {                    
+                {
                     _jumpButtonAlreadyPressed = false;
                     _jumpOn = true;
                 }
@@ -77,13 +81,13 @@ namespace HomeWork2
         }
 
         private void FixedUpdate()
-        {
+        {            
             _playerRotationY = Input.GetAxis("Mouse X");
             transform.Rotate(0f, _playerRotationY * _rotationSpeed * Time.deltaTime, 0f, Space.World);
             MovePlayer();
             MoveCamera();
             ProcessHotKeys();
-            _GUITextPresenter.text = $"HP {_playerHealth}";
+            _GUITextPresenter.text = $"{_playerHealth}";
         }
 
         #region ProcessHotKeys
@@ -106,7 +110,6 @@ namespace HomeWork2
                 _bombOn = false;
                 Bomb();
             }
-
         }
         #endregion
 
@@ -178,13 +181,15 @@ namespace HomeWork2
 
         public void Hit(float damage)
         {
-            if (_playerHealth > 0)
+            if (_playerHealth - damage > 0)
             {
                 _playerHealth -= damage;
             }
-            if (_playerHealth <= 0)
+            else
             {
-                print("Вы проиграли!");
+                _playerHealth = 0;
+                print("Вы проиграли!");                
+                SceneManager.LoadScene(1);
             }
         }
 

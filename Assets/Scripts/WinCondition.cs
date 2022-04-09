@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class WinCondition : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class WinCondition : MonoBehaviour
             {
                 _gameFinished = true;
                 print("YOU HAVE COMPLETED THE GAME!!!");
+                SceneManager.LoadScene(0);
             }
         }
     }
