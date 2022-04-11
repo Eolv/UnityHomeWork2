@@ -8,7 +8,8 @@ namespace HomeWork2
 {
     public class Bomb : MonoBehaviour
     {
-        //[SerializeField] private float _bombDamage = 10;
+        [SerializeField] private AudioClip _explosionSound;
+        [SerializeField] SoundContainer _soundContainer;
         private Collider _bombCollider;
         private Rigidbody _bombRigidbody;
         private float _bombDetonationTimer = 3f;
@@ -22,17 +23,19 @@ namespace HomeWork2
         }
 
         public void Init(float bombPushforce, float bombLifeTime)
-        {
+        {            
             _bombRigidbody.AddForce(transform.forward * bombPushforce);                  
             Invoke(nameof(Detonate), _bombDetonationTimer);
         }
 
         public void Detonate()
         {
+            SoundContainer explosionSound = Instantiate(_soundContainer);
+            explosionSound.PlaySound(_explosionSound);
+            explosionSound.gameObject.transform.position = transform.position;
             Collider[] bombVictims = Physics.OverlapSphere(transform.position, _explosionRadius);
             foreach (Collider victim in bombVictims)
-            {   
-                print(victim.name);
+            {    
                 if (victim.TryGetComponent(out Rigidbody targetObject))
                 {
                     Vector3 vectorToTarget = targetObject.position - transform.position;                    
